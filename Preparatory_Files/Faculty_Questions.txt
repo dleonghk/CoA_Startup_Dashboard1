@@ -1,0 +1,23 @@
+1) What are the key performance indicators (KPIs) for evaluating the 
+growth and success of tech startups in Atlanta?
+
+2) What historical data is essential for understanding the growth 
+trajectory of tech startups in Atlanta, and how far back should the 
+dashboard display data?
+
+3) Are there specific sectors within the tech industry in Atlanta (e.g., 
+FinTech, HealthTech, EdTech) that should be highlighted?
+
+4) What challenges do Atlanta tech startups face, and how can these be 
+represented on the dashboard to provide a holistic view of the ecosystem? 
+How can the dashboard help overcome these challenges?
+
+5) How should the dashboard visualize comparative data between Atlanta and 
+other major tech hubs to highlight Atlanta's unique position or 
+advantages? What cities should we compare with?
+
+6) How can the dashboard be designed to cater to its primary users (e.g., 
+investors, policymakers, entrepreneurs, institutions), and what 
+customization options might be necessary? For the faculty members, what 
+would you want to see in the perspective of an institution?
+
