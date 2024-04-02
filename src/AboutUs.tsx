@@ -4,8 +4,8 @@ import { Card } from "@tremor/react";
 
 const AboutUs: React.FC = () => {
   const teamMembers = [
-    { name: "Dickson Leong", role: "Team member", description: "Responsible for implementing the dashboard on a website." },
-    { name: "Alex Forbes", role: "Team member", description: "Handles the server-side logic and database management." },
+    { name: "Dickson Leong", role: "Team member", description: "Responsible for front end devlopment and designing the dashboard" },
+    { name: "Alex Forbes", role: "Team member", description: "Handles the server-side logic and database management" },
     { name: "Darren Ni", role: "Team member/Scrum Master", description: "Facilitates the Scrum process and and ensures that the team is productive and self-organizing" },
     { name: "Aaron Zaiman", role: "Team member", description: "Coordinates project with City of Atlanta/Georgia Tech counterparts and handles research on research metrics" },
     { name: "Yasasvi Josyula", role: "Team member", description: "Responsible for figma mockups as a visualization tool and front end development " },
