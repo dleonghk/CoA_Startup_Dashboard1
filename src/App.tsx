@@ -16,7 +16,10 @@ import AnnualReport from "./AnnualReport";
 import AboutUs from "./AboutUs";
 import ContactUs from "./ContactUs";
 import ErrorPage from "./Error";
+import Login from "./Login";
 import "./App.css";
+import './Login.css';
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -135,6 +138,9 @@ const App: React.FC = () => {
             </li>
             <li>
               <Link to="/contact-us">Contact Us</Link>
+            </li>
+            <li>
+            <Link to="/login">Login</Link>
             </li>
           </ul>
         </nav>
@@ -277,6 +283,7 @@ const App: React.FC = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="*" element={<ErrorPage />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </Router>
