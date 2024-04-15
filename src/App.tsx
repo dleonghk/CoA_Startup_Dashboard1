@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react'; 
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import {
   List,
@@ -9,7 +9,13 @@ import {
   DonutChart,
   BarChart,
   AreaChart,
+  ScatterChart,
+  Select,
+  SelectItem
+
 } from "@tremor/react";
+
+
 import Investors from "./Investors";
 import Students from "./Students";
 import AnnualReport from "./AnnualReport";
@@ -21,10 +27,138 @@ import "./App.css";
 import './Login.css';
 
 
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
-
+const chartdata = [
+  {
+    Country: 'Argentina',
+    'Life expectancy': 76.3,
+    GDP: 13467.1236,
+    Population: 43417765,
+  },
+  {
+    Country: 'Australia',
+    'Life expectancy': 82.8,
+    GDP: 56554.3876,
+    Population: 23789338,
+  },
+  {
+    Country: 'Austria',
+    'Life expectancy': 81.5,
+    GDP: 43665.947,
+    Population: 8633169,
+  },
+  {
+    Country: 'Brazil',
+    'Life expectancy': 75,
+    GDP: 8757.2622,
+    Population: 2596218,
+  },
+  {
+    Country: 'Estonia',
+    'Life expectancy': 77.6,
+    GDP: 1774.9291,
+    Population: 131547,
+  },
+  {
+    Country: 'Ethiopia',
+    'Life expectancy': 64.8,
+    GDP: 645.4637627,
+    Population: 9987333,
+  },
+  {
+    Country: 'Germany',
+    'Life expectancy': 81,
+    GDP: 41176.88158,
+    Population: 81686611,
+  },
+  {
+    Country: 'Honduras',
+    'Life expectancy': 74.6,
+    GDP: 2326.15856,
+    Population: 896829,
+  },
+  {
+    Country: 'Italy',
+    'Life expectancy': 82.7,
+    GDP: 349.14755,
+    Population: 673582,
+  },
+  {
+    Country: 'Lithuania',
+    'Life expectancy': 73.6,
+    GDP: 14252.42853,
+    Population: 29491,
+  },
+  {
+    Country: 'Mexico',
+    'Life expectancy': 76.7,
+    GDP: 9143.128494,
+    Population: 12589949,
+  },
+  {
+    Country: 'Norway',
+    'Life expectancy': 81.8,
+    GDP: 7455.24654,
+    Population: 518867,
+  },
+  {
+    Country: 'Philippines',
+    'Life expectancy': 68.5,
+    GDP: 2878.33837,
+    Population: 11716359,
+  },
+  {
+    Country: 'Samoa',
+    'Life expectancy': 74,
+    GDP: 4149.363444,
+    Population: 193759,
+  },
+  {
+    Country: 'Sao Tome and Principe',
+    'Life expectancy': 67.5,
+    GDP: 1624.63963,
+    Population: 195553,
+  },
+  {
+    Country: 'Senegal',
+    'Life expectancy': 66.7,
+    GDP: 98.7256145,
+    Population: 14976994,
+  },
+  {
+    Country: 'Switzerland',
+    'Life expectancy': 83.4,
+    GDP: 89899.8424,
+    Population: 8282396,
+  },
+  {
+    Country: 'Tajikistan',
+    'Life expectancy': 69.7,
+    GDP: 918.6771543,
+    Population: 8548651,
+  },
+  {
+    Country: 'Ukraine',
+    'Life expectancy': 71.3,
+    GDP: 2124.662666,
+    Population: 4515429,
+  },
+  {
+    Country: 'Uruguay',
+    'Life expectancy': 77,
+    GDP: 15524.84247,
+    Population: 3431552,
+  },
+  {
+    Country: 'Zimbabwe',
+    'Life expectancy': 67,
+    GDP: 118.69383,
+    Population: 15777451,
+  },
+];
 // some bs data i made up
 const startupsByYear = [
   { year: "2018", startups: 120 },
@@ -64,11 +198,10 @@ const fundingByYearSummary = [
 const valueFormatter = (number: number) =>
   `$${Intl.NumberFormat("us").format(number).toString()}`;
 
-  const statusColor: {[key: string]: string} = { // https://stackoverflow.com/questions/12736269/how-to-declare-return-types-for-functions-in-typescript
-    "Total Funding": "bg-blue-500",
-    "Pre-Seed Funding": "bg-violet-500",
+const statusColor = {
+  "Total Funding": "bg-blue-500",
+  "Pre-Seed Funding": "bg-violet-500",
 };
-
 
 const startupsByIndustry = [
   { industry: "Technology", value: 40 },
@@ -115,6 +248,69 @@ const cardData = [
     changeType: "positive",
   },
 ];
+
+function ScatterChartUsageExampleWithClickEvent() {
+  const [xAxis, setXAxis] = useState('GDP');
+  const [yAxis, setYAxis] = useState('Life expectancy');
+  const [size, setSize] = useState('Population');
+
+  const axisOptions = {
+    "Ecosystem Value": "ecosystemValue",
+    "Funding Rounds": "fundingRounds",
+    "Total Funding": "totalFunding",
+    "Number of Startups per Year": "numberOfStartups",
+    "Minority-founded Startups": "minorityStartups",
+    "Type of Startup": "startupType",
+    "Amount Raised This Year": "amountRaised",
+    "GDP": "GDP",
+    "Life expectancy": "Life expectancy",
+    "Population": "Population"
+  };
+
+  return (
+    <Card>
+      <div style={{ marginBottom: 16 }}>
+        <label>X-axis:</label>
+        <Select value={xAxis} onValueChange={setXAxis}>
+          {Object.entries(axisOptions).map(([label, value]) => (
+            <SelectItem value={value} key={value}>{label}</SelectItem>
+          ))}
+        </Select>
+
+        <label>Y-axis:</label>
+        <Select value={yAxis} onValueChange={setYAxis}>
+          {Object.entries(axisOptions).map(([label, value]) => (
+            <SelectItem value={value} key={value}>{label}</SelectItem>
+          ))}
+        </Select>
+
+        <label>Size:</label>
+        <Select value={size} onValueChange={setSize}>
+          {Object.entries(axisOptions).map(([label, value]) => (
+            <SelectItem value={value} key={value}>{label}</SelectItem>
+          ))}
+        </Select>
+      </div>
+      <ScatterChart
+        className="-ml-2 mt-6 h-80"
+        yAxisWidth={50}
+        data={chartdata}
+        category="Country"
+        x={xAxis}
+        y={yAxis}
+        size={size}
+        showOpacity={true}
+        minYValue={60}
+        showLegend={false}
+        valueFormatter={{
+          x: (amount) => `$${(amount / 1000).toFixed(1)}K`,
+          y: (amount) => `${amount} yrs`,
+          size: (amount) => `${(amount / 1000000).toFixed(1)}M people`,
+        }}
+      />
+    </Card>
+  );
+}
 
 const App: React.FC = () => {
   return (
@@ -191,6 +387,9 @@ const App: React.FC = () => {
                       categories={["startups"]}
                     />
                     <div className="text-center mt-2 text-white">Year</div>
+                  </div>
+                  <div className="scatter-chart-container">
+                    <ScatterChartUsageExampleWithClickEvent />
                   </div>
 
                   <div>
@@ -275,6 +474,8 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                {/* Integrating the ScatterChart component directly on the Home page
+                <ScatterChartUsageExampleWithClickEvent /> */}
               </>
             }
           />
