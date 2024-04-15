@@ -4,14 +4,15 @@ import { Card } from "@tremor/react";
 
 const AboutUs: React.FC = () => {
   const teamMembers = [
-    { name: "Dickson Leong", role: "Team member", description: "Responsible for front end devlopment and designing the dashboard" },
-    { name: "Alex Forbes", role: "Team member", description: "Handles the server-side logic and database management" },
-    { name: "Darren Ni", role: "Team member/Scrum Master", description: "Facilitates the Scrum process and and ensures that the team is productive and self-organizing" },
-    { name: "Aaron Zaiman", role: "Team member", description: "Coordinates project with City of Atlanta/Georgia Tech counterparts and handles research on research metrics" },
-    { name: "Yasasvi Josyula", role: "Team member", description: "Responsible for figma mockups as a visualization tool and front end development " },
-    { name: "Doron Czarny", role: "Team member", description: "Responsible for front end development, specifically implementing specific requested features" },
-    { name: "Lachlan Spangler", role: "Team member", description: "Handles feedback from City of Atlanta and product owners, and makes actionable items on jira to tackle ongoing issues" },
+    { name: "Dickson Leong", role: "Team member", description: "Responsible for front end development and designing the dashboard", imageUrl: "/path/to/image1.jpg" },
+    { name: "Alex Forbes", role: "Team member", description: "Handles the server-side logic and database management", imageUrl: "/path/to/image2.jpg" },
+    { name: "Darren Ni", role: "Team member/Scrum Master", description: "Facilitates the Scrum process and ensures that the team is productive and self-organizing", imageUrl: "/path/to/image3.jpg" },
+    { name: "Aaron Zaiman", role: "Team member", description: "Coordinates project with City of Atlanta/Georgia Tech counterparts and handles research on research metrics", imageUrl: "/path/to/image4.jpg" },
+    { name: "Yasasvi Josyula", role: "Team member", description: "Responsible for figma mockups as a visualization tool and front end development", imageUrl: "/path/to/image5.jpg" },
+    { name: "Doron Czarny", role: "Team member", description: "Responsible for front end development, specifically implementing specific requested features", imageUrl: "/path/to/image6.jpg" },
+    { name: "Lachlan Spangler", role: "Team member", description: "Handles feedback from City of Atlanta and product owners, and makes actionable items on jira to tackle ongoing issues", imageUrl: "/path.to/image7.jpg" },
   ];
+  
 
   return (
     <div className="container mx-auto">

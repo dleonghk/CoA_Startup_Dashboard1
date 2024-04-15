@@ -64,10 +64,11 @@ const fundingByYearSummary = [
 const valueFormatter = (number: number) =>
   `$${Intl.NumberFormat("us").format(number).toString()}`;
 
-const statusColor = {
-  "Total Funding": "bg-blue-500",
-  "Pre-Seed Funding": "bg-violet-500",
+  const statusColor: {[key: string]: string} = { // https://stackoverflow.com/questions/12736269/how-to-declare-return-types-for-functions-in-typescript
+    "Total Funding": "bg-blue-500",
+    "Pre-Seed Funding": "bg-violet-500",
 };
+
 
 const startupsByIndustry = [
   { industry: "Technology", value: 40 },

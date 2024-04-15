@@ -15,7 +15,7 @@ const ContactUs: React.FC = () => {
             <div>
               <h3 className="text-xl font-bold text-cyan-200">Contact Information</h3>
               <ul className="list-none mt-2">
-                <li><strong>Email:</strong> dummy@askteam.com</li>
+                <li><strong>Email:</strong> dummy@askteamforouremail.com</li>
                 <li><strong>Phone:</strong> (xxx) xxx-xxxx</li>
                 <li><strong>Address:</strong> Need an address?, ATL, GA</li>
               </ul>
@@ -30,7 +30,7 @@ const ContactUs: React.FC = () => {
               <input type="email" id="email" className="mb-4 p-2 rounded text-gray-700" placeholder="Your Name..." />
 
               <label htmlFor="message" className="mb-2">Your Message</label>
-              <textarea id="message" className="mb-6 p-2 rounded text-gray-700" placeholder="Type your message here..." rows="4"></textarea>
+              <textarea id="message" className="mb-6 p-2 rounded text-gray-700" placeholder="Type your message here..." rows={4}></textarea>
 
               <button type="submit" className="p-2 bg-cyan-500 rounded hover:bg-cyan-400 transition duration-300">Send Message</button>
             </form>
