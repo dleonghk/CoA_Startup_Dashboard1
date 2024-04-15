@@ -4,16 +4,19 @@ from flask_mail import Mail, Message
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired, Email
+from flask_cors import CORS
 
 app = Flask(__name__, static_folder='../dist', static_url_path='')
+CORS(app)  
 
-# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-# app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USE_SSL'] = True
-# app.config['MAIL_USERNAME'] = 'dashboardcoa@gmail.com'
-# app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-# app.config['MAIL_DEFAULT_SENDER'] = 'dashboardcoa@gmail.com'
-# app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'dashboardcoa@gmail.com'
+app.config['MAIL_PASSWORD'] = 'eqwx okux omfr soxa' #os.getenv('MAIL_PASSWORD') #
+app.config['MAIL_DEFAULT_SENDER'] = 'dashboardcoa@gmail.com'
+app.config['SECRET_KEY'] = 'doronaaron' #os.getenv('SECRET_KEY')
+
 
 mail = Mail(app)
 
@@ -25,17 +28,15 @@ class ContactForm(FlaskForm):
 
 @app.route('/contact', methods=['POST'])
 def contact():
-    form = ContactForm()
-    if form.validate_on_submit():
-        name = form.name.data
-        email = form.email.data
-        message = form.message.data
-        msg = Message("Contact Form Submission",
-                      recipients=['dashboardcoa@gmail.com'],
-                      body=f"From: {name} <{email}>\n\n{message}")
-        mail.send(msg)
-        return jsonify({"status": "success", "message": "Message sent successfully!"})
-    return jsonify({"status": "error", "errors": form.errors}), 400
+    data = request.get_json()
+    name = data['name']
+    email = data['email']
+    message = data['message']
+    msg = Message("Contact Form Submission",
+                  recipients=['dashboardcoa@gmail.com'],
+                  body=f"From: {name} <{email}>\n\n{message}")
+    mail.send(msg)
+    return jsonify({"status": "success", "message": "Message sent successfully!"})
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

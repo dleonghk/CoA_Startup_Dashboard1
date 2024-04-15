@@ -22,9 +22,7 @@ import AnnualReport from "./AnnualReport";
 import AboutUs from "./AboutUs";
 import ContactUs from "./ContactUs";
 import ErrorPage from "./Error";
-import Login from "./Login";
 import "./App.css";
-import './Login.css';
 
 
 
@@ -198,9 +196,9 @@ const fundingByYearSummary = [
 const valueFormatter = (number: number) =>
   `$${Intl.NumberFormat("us").format(number).toString()}`;
 
-const statusColor = {
-  "Total Funding": "bg-blue-500",
-  "Pre-Seed Funding": "bg-violet-500",
+const statusColor: {[key: string]: string} = { // https://stackoverflow.com/questions/12736269/how-to-declare-return-types-for-functions-in-typescript
+      "Total Funding": "bg-blue-500",
+      "Pre-Seed Funding": "bg-violet-500",
 };
 
 const startupsByIndustry = [
@@ -269,7 +267,7 @@ function ScatterChartUsageExampleWithClickEvent() {
 
   return (
     <Card>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 , color: 'white'}}>
         <label>X-axis:</label>
         <Select value={xAxis} onValueChange={setXAxis}>
           {Object.entries(axisOptions).map(([label, value]) => (
@@ -336,9 +334,7 @@ const App: React.FC = () => {
             <li>
               <Link to="/contact-us">Contact Us</Link>
             </li>
-            <li>
-            <Link to="/login">Login</Link>
-            </li>
+
           </ul>
         </nav>
 
@@ -485,7 +481,7 @@ const App: React.FC = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/login" element={<Login />} />
+
         </Routes>
       </div>
     </Router>
