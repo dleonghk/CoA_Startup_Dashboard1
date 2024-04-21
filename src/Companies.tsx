@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  ColumnDef,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -17,6 +18,16 @@ import {
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
+}
+
+interface Company {
+  name: string;
+  industries: string;
+  valuation: number;
+  growthStage: string;
+  totalFunding: number;
+  lastFundingRound: string;
+  launchYear: number;
 }
 
 const companies = [
@@ -203,7 +214,7 @@ const companies = [
   },
 ];
 
-const companiesColumns = [
+const companiesColumns: ColumnDef<Company, unknown>[] = [
   {
     header: "Company Name",
     accessorKey: "name",
@@ -219,7 +230,7 @@ const companiesColumns = [
     accessorKey: "valuation",
     enableSorting: true,
     cell: ({ getValue }) => {
-      const number: number = getValue();
+      const number = getValue() as number;
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -232,7 +243,7 @@ const companiesColumns = [
     accessorKey: "totalFunding",
     enableSorting: true,
     cell: ({ getValue }) => {
-      const number: number = getValue();
+      const number = getValue() as number;
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -258,18 +269,13 @@ const companiesColumns = [
 ];
 
 export default function Companies() {
-  const table = useReactTable({
+  const table = useReactTable<Company>({
     data: companies,
     columns: companiesColumns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     initialState: {
-      sorting: [
-        {
-          id: "valuation",
-          desc: false,
-        },
-      ],
+      sorting: [{ id: "valuation", desc: false }],
     },
   });
 
