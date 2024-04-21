@@ -311,6 +311,12 @@ function ScatterChartUsageExampleWithClickEvent() {
   );
 }
 
+
+
+
+
+
+
 const App: React.FC = () => {
   return (
     <Router>
