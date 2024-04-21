@@ -110,7 +110,7 @@ const companies = [
     lastFundingRound: "Series A",
     launchYear: 2016,
   },
-  // Adding 10 new rows
+
   {
     name: "OpenAI",
     industries: "Artificial Intelligence, Research",
@@ -202,6 +202,7 @@ const companies = [
     launchYear: 2013,
   },
 ];
+
 const companiesColumns = [
   {
     header: "Company Name",
@@ -218,7 +219,7 @@ const companiesColumns = [
     accessorKey: "valuation",
     enableSorting: true,
     cell: ({ getValue }) => {
-      const number = getValue();
+      const number: number = getValue();
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -231,7 +232,7 @@ const companiesColumns = [
     accessorKey: "totalFunding",
     enableSorting: true,
     cell: ({ getValue }) => {
-      const number = getValue();
+      const number: number = getValue();
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -283,52 +284,67 @@ export default function Companies() {
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHeaderCell
-                  key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      header.column.getToggleSortingHandler()(event);
+              {headerGroup.headers.map((header) => {
+                const toggleSortingHandler =
+                  header.column.getToggleSortingHandler();
+
+                return (
+                  <TableHeaderCell
+                    key={header.id}
+                    onClick={(event) =>
+                      toggleSortingHandler && toggleSortingHandler(event)
                     }
-                  }}
-                  className={classNames(
-                    header.column.getCanSort()
-                      ? "cursor-pointer select-none"
-                      : "",
-                    "px-0.5 py-1.5 text-cyan-200"
-                  )}
-                  tabIndex={header.column.getCanSort() ? 0 : -1}
-                  aria-sort={header.column.getIsSorted()}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && toggleSortingHandler) {
+                        toggleSortingHandler(event);
+                      }
+                    }}
+                    className={classNames(
+                      header.column.getCanSort()
+                        ? "cursor-pointer select-none"
+                        : "",
+                      "px-0.5 py-1.5 text-cyan-200"
                     )}
-                    {header.column.getCanSort() && (
-                      <div className="-space-y-2">
-                        <RiArrowUpSLine
-                          className={
-                            header.column.getIsSorted() === "desc"
-                              ? "opacity-30"
-                              : ""
-                          }
-                          aria-hidden={true}
-                        />
-                        <RiArrowDownSLine
-                          className={
-                            header.column.getIsSorted() === "asc"
-                              ? "opacity-30"
-                              : ""
-                          }
-                          aria-hidden={true}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </TableHeaderCell>
-              ))}
+                    tabIndex={header.column.getCanSort() ? 0 : -1}
+                    aria-sort={
+                      header.column.getIsSorted()
+                        ? header.column.getIsSorted() === "asc"
+                          ? "ascending"
+                          : header.column.getIsSorted() === "desc"
+                          ? "descending"
+                          : "none"
+                        : "none"
+                    }
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {header.column.getCanSort() && (
+                        <div className="-space-y-2">
+                          <RiArrowUpSLine
+                            className={
+                              header.column.getIsSorted() === "desc"
+                                ? "opacity-30"
+                                : ""
+                            }
+                            aria-hidden={true}
+                          />
+                          <RiArrowDownSLine
+                            className={
+                              header.column.getIsSorted() === "asc"
+                                ? "opacity-30"
+                                : ""
+                            }
+                            aria-hidden={true}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </TableHeaderCell>
+                );
+              })}
             </TableRow>
           ))}
         </TableHead>
