@@ -16,8 +16,8 @@ import {
   TableRow,
 } from "@tremor/react";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+function classNames(...classes: string[]): string {
+  return classes.filter(Boolean).join(' ');
 }
 
 interface Company {
