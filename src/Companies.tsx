@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import {
   flexRender,
@@ -25,250 +26,323 @@ interface Company {
   industries: string;
   valuation: number;
   growthStage: string;
-  totalFunding: number;
+  // totalFunding: number;
   lastFundingRound: string;
   launchYear: number;
 }
 
-const companies = [
-  {
-    name: "QuantumScape",
-    industries: "Energy, Battery Technology",
-    valuation: 6800000000,
-    growthStage: "Growth",
-    totalFunding: 1500000000,
-    lastFundingRound: "Series D",
-    launchYear: 2010,
-  },
-  {
-    name: "Lilium",
-    industries: "Aerospace, Electric Vehicles",
-    valuation: 3300000000,
-    growthStage: "Early",
-    totalFunding: 500000000,
-    lastFundingRound: "Series B",
-    launchYear: 2015,
-  },
-  {
-    name: "Ribbit Leap",
-    industries: "Fintech, Investments",
-    valuation: 2000000000,
-    growthStage: "Growth",
-    totalFunding: 600000000,
-    lastFundingRound: "Series C",
-    launchYear: 2012,
-  },
-  {
-    name: "Helion Energy",
-    industries: "Energy, Fusion Power",
-    valuation: 4000000000,
-    growthStage: "Expansion",
-    totalFunding: 1200000000,
-    lastFundingRound: "Series E",
-    launchYear: 2013,
-  },
-  {
-    name: "Zapier",
-    industries: "SaaS, Automation",
-    valuation: 5000000000,
-    growthStage: "Mature",
-    totalFunding: 290000000,
-    lastFundingRound: "Series A",
-    launchYear: 2011,
-  },
-  {
-    name: "Bolt",
-    industries: "E-commerce, Technology",
-    valuation: 8000000000,
-    growthStage: "Expansion",
-    totalFunding: 2000000000,
-    lastFundingRound: "Series F",
-    launchYear: 2014,
-  },
-  {
-    name: "Nuro",
-    industries: "Autonomous Vehicles, Robotics",
-    valuation: 8600000000,
-    growthStage: "Growth",
-    totalFunding: 1000000000,
-    lastFundingRound: "Series D",
-    launchYear: 2016,
-  },
-  {
-    name: "Impossible Foods",
-    industries: "Food and Beverage, Plant-based Proteins",
-    valuation: 7000000000,
-    growthStage: "Expansion",
-    totalFunding: 1500000000,
-    lastFundingRound: "Series G",
-    launchYear: 2011,
-  },
-  {
-    name: "Modern Meadow",
-    industries: "Biotechnology, Leather Alternatives",
-    valuation: 700000000,
-    growthStage: "Growth",
-    totalFunding: 300000000,
-    lastFundingRound: "Series C",
-    launchYear: 2014,
-  },
-  {
-    name: "Neuralink",
-    industries: "Healthcare, Neurotechnology",
-    valuation: 1000000000,
-    growthStage: "Early",
-    totalFunding: 158000000,
-    lastFundingRound: "Series A",
-    launchYear: 2016,
-  },
+// const companies = [
+//   {
+//     name: "QuantumScape",
+//     industries: "Energy, Battery Technology",
+//     valuation: 6800000000,
+//     growthStage: "Growth",
+//     totalFunding: 1500000000,
+//     lastFundingRound: "Series D",
+//     launchYear: 2010,
+//   },
+//   {
+//     name: "Lilium",
+//     industries: "Aerospace, Electric Vehicles",
+//     valuation: 3300000000,
+//     growthStage: "Early",
+//     totalFunding: 500000000,
+//     lastFundingRound: "Series B",
+//     launchYear: 2015,
+//   },
+//   {
+//     name: "Ribbit Leap",
+//     industries: "Fintech, Investments",
+//     valuation: 2000000000,
+//     growthStage: "Growth",
+//     totalFunding: 600000000,
+//     lastFundingRound: "Series C",
+//     launchYear: 2012,
+//   },
+//   {
+//     name: "Helion Energy",
+//     industries: "Energy, Fusion Power",
+//     valuation: 4000000000,
+//     growthStage: "Expansion",
+//     totalFunding: 1200000000,
+//     lastFundingRound: "Series E",
+//     launchYear: 2013,
+//   },
+//   {
+//     name: "Zapier",
+//     industries: "SaaS, Automation",
+//     valuation: 5000000000,
+//     growthStage: "Mature",
+//     totalFunding: 290000000,
+//     lastFundingRound: "Series A",
+//     launchYear: 2011,
+//   },
+//   {
+//     name: "Bolt",
+//     industries: "E-commerce, Technology",
+//     valuation: 8000000000,
+//     growthStage: "Expansion",
+//     totalFunding: 2000000000,
+//     lastFundingRound: "Series F",
+//     launchYear: 2014,
+//   },
+//   {
+//     name: "Nuro",
+//     industries: "Autonomous Vehicles, Robotics",
+//     valuation: 8600000000,
+//     growthStage: "Growth",
+//     totalFunding: 1000000000,
+//     lastFundingRound: "Series D",
+//     launchYear: 2016,
+//   },
+//   {
+//     name: "Impossible Foods",
+//     industries: "Food and Beverage, Plant-based Proteins",
+//     valuation: 7000000000,
+//     growthStage: "Expansion",
+//     totalFunding: 1500000000,
+//     lastFundingRound: "Series G",
+//     launchYear: 2011,
+//   },
+//   {
+//     name: "Modern Meadow",
+//     industries: "Biotechnology, Leather Alternatives",
+//     valuation: 700000000,
+//     growthStage: "Growth",
+//     totalFunding: 300000000,
+//     lastFundingRound: "Series C",
+//     launchYear: 2014,
+//   },
+//   {
+//     name: "Neuralink",
+//     industries: "Healthcare, Neurotechnology",
+//     valuation: 1000000000,
+//     growthStage: "Early",
+//     totalFunding: 158000000,
+//     lastFundingRound: "Series A",
+//     launchYear: 2016,
+//   },
 
-  {
-    name: "OpenAI",
-    industries: "Artificial Intelligence, Research",
-    valuation: 2900000000,
-    growthStage: "Expansion",
-    totalFunding: 1000000000,
-    lastFundingRound: "Series B",
-    launchYear: 2015,
-  },
-  {
-    name: "SpaceX",
-    industries: "Aerospace, Transport",
-    valuation: 74000000000,
-    growthStage: "Mature",
-    totalFunding: 10000000000,
-    lastFundingRound: "Series K",
-    launchYear: 2002,
-  },
-  {
-    name: "ByteDance",
-    industries: "Social Media, Technology",
-    valuation: 140000000000,
-    growthStage: "Mature",
-    totalFunding: 7000000000,
-    lastFundingRound: "Series I",
-    launchYear: 2012,
-  },
-  {
-    name: "Stripe",
-    industries: "Fintech, Software",
-    valuation: 95000000000,
-    growthStage: "Expansion",
-    totalFunding: 2000000000,
-    lastFundingRound: "Series G",
-    launchYear: 2010,
-  },
-  {
-    name: "Rivian",
-    industries: "Automotive, Electric Vehicles",
-    valuation: 27000000000,
-    growthStage: "Growth",
-    totalFunding: 10500000000,
-    lastFundingRound: "Series H",
-    launchYear: 2009,
-  },
-  {
-    name: "Epic Games",
-    industries: "Gaming, Software",
-    valuation: 17000000000,
-    growthStage: "Expansion",
-    totalFunding: 3400000000,
-    lastFundingRound: "Series E",
-    launchYear: 1991,
-  },
-  {
-    name: "Palantir",
-    industries: "Data Analytics, Software",
-    valuation: 15000000000,
-    growthStage: "Mature",
-    totalFunding: 3000000000,
-    lastFundingRound: "Series J",
-    launchYear: 2003,
-  },
-  {
-    name: "Tesla",
-    industries: "Automotive, Energy",
-    valuation: 600000000000,
-    growthStage: "Mature",
-    totalFunding: 20000000000,
-    lastFundingRound: "Series F",
-    launchYear: 2003,
-  },
-  {
-    name: "Theranos",
-    industries: "Healthcare, Biotechnology",
-    valuation: 900000000,
-    growthStage: "Early",
-    totalFunding: 700000000,
-    lastFundingRound: "Series C",
-    launchYear: 2003,
-  },
-  {
-    name: "Robinhood",
-    industries: "Fintech, Stock Trading",
-    valuation: 11000000000,
-    growthStage: "Growth",
-    totalFunding: 2200000000,
-    lastFundingRound: "Series G",
-    launchYear: 2013,
-  },
-];
+//   {
+//     name: "OpenAI",
+//     industries: "Artificial Intelligence, Research",
+//     valuation: 2900000000,
+//     growthStage: "Expansion",
+//     totalFunding: 1000000000,
+//     lastFundingRound: "Series B",
+//     launchYear: 2015,
+//   },
+//   {
+//     name: "SpaceX",
+//     industries: "Aerospace, Transport",
+//     valuation: 74000000000,
+//     growthStage: "Mature",
+//     totalFunding: 10000000000,
+//     lastFundingRound: "Series K",
+//     launchYear: 2002,
+//   },
+//   {
+//     name: "ByteDance",
+//     industries: "Social Media, Technology",
+//     valuation: 140000000000,
+//     growthStage: "Mature",
+//     totalFunding: 7000000000,
+//     lastFundingRound: "Series I",
+//     launchYear: 2012,
+//   },
+//   {
+//     name: "Stripe",
+//     industries: "Fintech, Software",
+//     valuation: 95000000000,
+//     growthStage: "Expansion",
+//     totalFunding: 2000000000,
+//     lastFundingRound: "Series G",
+//     launchYear: 2010,
+//   },
+//   {
+//     name: "Rivian",
+//     industries: "Automotive, Electric Vehicles",
+//     valuation: 27000000000,
+//     growthStage: "Growth",
+//     totalFunding: 10500000000,
+//     lastFundingRound: "Series H",
+//     launchYear: 2009,
+//   },
+//   {
+//     name: "Epic Games",
+//     industries: "Gaming, Software",
+//     valuation: 17000000000,
+//     growthStage: "Expansion",
+//     totalFunding: 3400000000,
+//     lastFundingRound: "Series E",
+//     launchYear: 1991,
+//   },
+//   {
+//     name: "Palantir",
+//     industries: "Data Analytics, Software",
+//     valuation: 15000000000,
+//     growthStage: "Mature",
+//     totalFunding: 3000000000,
+//     lastFundingRound: "Series J",
+//     launchYear: 2003,
+//   },
+//   {
+//     name: "Tesla",
+//     industries: "Automotive, Energy",
+//     valuation: 600000000000,
+//     growthStage: "Mature",
+//     totalFunding: 20000000000,
+//     lastFundingRound: "Series F",
+//     launchYear: 2003,
+//   },
+//   {
+//     name: "Theranos",
+//     industries: "Healthcare, Biotechnology",
+//     valuation: 900000000,
+//     growthStage: "Early",
+//     totalFunding: 700000000,
+//     lastFundingRound: "Series C",
+//     launchYear: 2003,
+//   },
+//   {
+//     name: "Robinhood",
+//     industries: "Fintech, Stock Trading",
+//     valuation: 11000000000,
+//     growthStage: "Growth",
+//     totalFunding: 2200000000,
+//     lastFundingRound: "Series G",
+//     launchYear: 2013,
+//   },
+// ];
 
-const companiesColumns: ColumnDef<Company, unknown>[] = [
-  {
-    header: "Company Name",
-    accessorKey: "name",
-    enableSorting: true,
-  },
-  {
-    header: "Industry",
-    accessorKey: "industries",
-    enableSorting: true,
-  },
-  {
-    header: "Valuation",
-    accessorKey: "valuation",
-    enableSorting: true,
-    cell: ({ getValue }) => {
-      const number = getValue() as number;
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-      }).format(number);
-    },
-  },
-  {
-    header: "Total Funding",
-    accessorKey: "totalFunding",
-    enableSorting: true,
-    cell: ({ getValue }) => {
-      const number = getValue() as number;
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-      }).format(number);
-    },
-  },
-  {
-    header: "Last Funding Round",
-    accessorKey: "lastFundingRound",
-    enableSorting: false,
-  },
-  {
-    header: "Growth Stage",
-    accessorKey: "growthStage",
-    enableSorting: false,
-  },
-  {
-    header: "Launch Year",
-    accessorKey: "launchYear",
-    enableSorting: true,
-  },
-];
+// const companiesColumns: ColumnDef<Company, unknown>[] = [
+//   {
+//     header: "Company Name",
+//     accessorKey: "name",
+//     enableSorting: true,
+//   },
+//   {
+//     header: "Industry",
+//     accessorKey: "industries",
+//     enableSorting: true,
+//   },
+//   {
+//     header: "Valuation",
+//     accessorKey: "valuation",
+//     enableSorting: true,
+//     cell: ({ getValue }) => {
+//       const number = getValue() as number;
+//       return new Intl.NumberFormat("en-US", {
+//         style: "currency",
+//         currency: "USD",
+//         minimumFractionDigits: 0,
+//       }).format(number);
+//     },
+//   },
+//   {
+//     header: "Total Funding",
+//     accessorKey: "totalFunding",
+//     enableSorting: true,
+//     cell: ({ getValue }) => {
+//       const number = getValue() as number;
+//       return new Intl.NumberFormat("en-US", {
+//         style: "currency",
+//         currency: "USD",
+//         minimumFractionDigits: 0,
+//       }).format(number);
+//     },
+//   },
+//   {
+//     header: "Last Funding Round",
+//     accessorKey: "lastFundingRound",
+//     enableSorting: false,
+//   },
+//   {
+//     header: "Growth Stage",
+//     accessorKey: "growthStage",
+//     enableSorting: false,
+//   },
+//   {
+//     header: "Launch Year",
+//     accessorKey: "launchYear",
+//     enableSorting: true,
+//   },
+// ];
 
+// export default function Companies() {
+//   const table = useReactTable<Company>({
+//     data: companies,
+//     columns: companiesColumns,
+//     getCoreRowModel: getCoreRowModel(),
+//     getSortedRowModel: getSortedRowModel(),
+//     initialState: {
+//       sorting: [{ id: "valuation", desc: false }],
+//     },
+//   });
 export default function Companies() {
+  const [companies, setCompanies] = useState<Company[]>([]);
+
+  useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const response = await fetch('/api/company_page');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        setCompanies(data);
+      } catch (error) {
+        console.error('Failed to fetch companies', error);
+      }
+    }
+
+    fetchCompanies();
+  }, []);
+
+  const companiesColumns: ColumnDef<Company, unknown>[] = [
+    {
+      header: "Company Name",
+      accessorKey: "name",
+      enableSorting: true,
+    },
+    {
+      header: "Industry",
+      accessorKey: "industries",
+      enableSorting: true,
+    },
+    {
+      header: "Valuation",
+      accessorKey: "current_company_valuation",
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (isNaN(value as number) || value === '') {
+          return "N/A";
+        } else {
+          const numericValue = parseFloat(value as string);
+          return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 0,
+          }).format(numericValue);
+        }
+      },
+    },
+    {
+      header: "Last Funding Round",
+      accessorKey: "round",
+      enableSorting: false,
+    },
+    {
+      header: "Growth Stage",
+      accessorKey: "growth_stage",
+      enableSorting: false,
+    },
+    {
+      header: "Launch Year",
+      accessorKey: "launch_year",
+      enableSorting: true,
+    },
+  ];
+
   const table = useReactTable<Company>({
     data: companies,
     columns: companiesColumns,
@@ -278,6 +352,8 @@ export default function Companies() {
       sorting: [{ id: "valuation", desc: false }],
     },
   });
+
+
 
   return (
     <>
