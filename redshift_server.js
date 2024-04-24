@@ -1,7 +1,9 @@
+const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 require('dotenv').config();
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
@@ -10,7 +12,7 @@ const pool = new Pool({ //NEED TO SWITCH TO ENVIRONMENTAL VARIABLES
   host: process.env.REDSHIFT_HOST,
   database: process.env.REDSHIFT_DATABASE,
   password: process.env.REDSHIFT_PASSWORD,
-  port: process.env.REDSHIFT_PORT,
+  port: process.env.REDSHIFT,
 });
 
 
@@ -80,6 +82,14 @@ try {
 }
 
 
+
+
+
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 
 
