@@ -1,5 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
-import { RiArrowDownSLine, RiArrowUpSLine, RiSearchLine } from "@remixicon/react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import {
   flexRender,
   getCoreRowModel,
@@ -19,7 +23,7 @@ import {
 } from "@tremor/react";
 
 function classNames(...classes: string[]): string {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 interface Company {
@@ -27,37 +31,48 @@ interface Company {
   industries: string;
   valuation: number;
   growthStage: string;
-  // totalFunding: number;
+  totalFunding: number;
   lastFundingRound: string;
   launchYear: number;
 }
 
+function getMedianValue(value) {
+  if (value && value.includes("-")) {
+    const parts = value.split("-").map((part) => parseFloat(part.trim()));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return (parts[0] + parts[1]) / 2;
+    }
+  }
+  return parseFloat(value);
+}
 
 export default function Companies() {
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const cachedData = localStorage.getItem('companies');
-      if (cachedData) {
-        setCompanies(JSON.parse(cachedData));
-      } else {
-        try {
-          const response = await fetch('/api/company_page');
-          if (!response.ok) {
-            console.error('Failed to fetch companies: Network response was not ok');
-            return;
-          }
-          const data = await response.json();
-          setCompanies(data);
-          localStorage.setItem('companies', JSON.stringify(data));
-        } catch (error) {
-          console.error('Failed to fetch companies', error);
+      //const cachedData = localStorage.getItem("companies");
+      //if (cachedData) {
+      //  setCompanies(JSON.parse(cachedData));
+      //} else {
+      try {
+        const response = await fetch("/api/company_page");
+        if (!response.ok) {
+          console.error(
+            "Failed to fetch companies: Network response was not ok"
+          );
+          return;
         }
+        const data = await response.json();
+        setCompanies(data);
+        localStorage.setItem("companies", JSON.stringify(data));
+      } catch (error) {
+        console.error("Failed to fetch companies", error);
       }
+      //}
     };
-  
+
     fetchData();
   }, []);
 
@@ -65,10 +80,13 @@ export default function Companies() {
     setSearchTerm(event.target.value);
   }
 
-  const filteredCompanies = useMemo(() => companies.filter(company =>
-    company.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ), [companies, searchTerm]);
-  
+  const filteredCompanies = useMemo(
+    () =>
+      companies.filter((company) =>
+        company.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [companies, searchTerm]
+  );
 
   const companiesColumns: ColumnDef<Company, unknown>[] = [
     {
@@ -81,41 +99,44 @@ export default function Companies() {
       accessorKey: "industries",
       enableSorting: true,
     },
-    // {
-      //     header: "Total Funding",
-      //     accessorKey: "totalFunding",
-      //     enableSorting: true,
-      //     cell: ({ getValue }) => {
-      //       const number = getValue() as number;
-      //       return new Intl.NumberFormat("en-US", {
-      //         style: "currency",
-      //         currency: "USD",
-      //         minimumFractionDigits: 0,
-      //       }).format(number);
-      //     },
-      //   },
     {
-      header: "Valuation",
-      accessorKey: "current_company_valuation",
+      header: "Total Funding",
+      accessorKey: "amount",
       enableSorting: true,
       cell: ({ getValue }) => {
         const value = getValue();
-        if (isNaN(value as number) || value === '') {
-          return "N/A";
-        } else {
-          const numericValue = parseFloat(value as string);
+        const medianValue = getMedianValue(value);
+        if (!isNaN(medianValue)) {
           return new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
             minimumFractionDigits: 0,
-          }).format(numericValue);
+          }).format(medianValue);
         }
+        return "N/A";
       },
     },
     {
       header: "Last Funding Round",
       accessorKey: "round",
       enableSorting: false,
+    },
+    {
+      header: "Valuation",
+      accessorKey: "round_valuation_usd",
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const value = getValue();
+        const medianValue = getMedianValue(value);
+        if (!isNaN(medianValue)) {
+          return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 0,
+          }).format(medianValue);
+        }
+        return "N/A";
+      },
     },
     {
       header: "Growth Stage",
@@ -135,15 +156,12 @@ export default function Companies() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     initialState: {
-      sorting: [{ id: "valuation", desc: false }],
+      sorting: [{ id: "valuation", desc: true }],
     },
   });
 
-
-
   return (
     <>
-
       <div className="mb-8 flex justify-center w-full">
         <h1 className="text-3xl font-bold text-cyan-200">
           Comprehensive List of Startups
