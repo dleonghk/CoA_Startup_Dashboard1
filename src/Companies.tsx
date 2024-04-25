@@ -1,9 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
-import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+} from "@remixicon/react";
 import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   ColumnDef,
   useReactTable,
 } from "@tanstack/react-table";
@@ -29,7 +35,21 @@ interface Company {
   totalFunding: number;
   lastFundingRound: string;
   launchYear: number;
+  width: number;
 }
+
+const Button = ({ onClick, disabled, children }) => {
+  return (
+    <button
+      type="button"
+      className="px-2 py-2 text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+};
 
 function capitalizeWords(str) {
   return str
@@ -59,18 +79,22 @@ export default function Companies() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [companySearchTerm, setCompanySearchTerm] = useState("");
   const [industrySearchTerm, setIndustrySearchTerm] = useState("");
+  const [pageIndex] = useState(0);
+  const [pageSize] = useState(20);
 
-  function handleCompanySearchChange(
+  const handleCompanySearchChange = (
     event: React.ChangeEvent<HTMLInputElement>
-  ) {
+  ) => {
+    event.stopPropagation();
     setCompanySearchTerm(event.target.value);
-  }
+  };
 
-  function handleIndustrySearchChange(
+  const handleIndustrySearchChange = (
     event: React.ChangeEvent<HTMLInputElement>
-  ) {
+  ) => {
+    event.stopPropagation();
     setIndustrySearchTerm(event.target.value);
-  }
+  };
 
   const filteredCompanies = useMemo(() => {
     return companies.filter(
@@ -189,11 +213,16 @@ export default function Companies() {
   const table = useReactTable<Company>({
     data: filteredCompanies,
     columns: companiesColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     initialState: {
       sorting: [{ id: "round_valuation_usd", desc: true }],
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
@@ -210,23 +239,24 @@ export default function Companies() {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 const hasSearch =
-                  header.id === "name" || header.id === "industries"; // Only these columns have search
+                  header.id === "name" || header.id === "industries";
                 return (
                   <TableHeaderCell
                     key={header.id}
-                    onClick={(event) =>
-                      header.column.getToggleSortingHandler()?.(event)
-                    }
                     className={classNames(
                       header.column.getCanSort()
                         ? "cursor-pointer select-none"
                         : "",
-                      "px-0.5 py-1.5 text-cyan-200"
+                      "px-0.5 py-1.5 text-cyan-200",
+                      !hasSearch && "raise-header" // Apply the class conditionally
                     )}
                     tabIndex={header.column.getCanSort() ? 0 : -1}
                   >
                     <div className="flex flex-col items-center w-full">
-                      <div className="flex justify-between items-center w-full">
+                      <div
+                        onClick={header.column.getToggleSortingHandler()}
+                        className="flex justify-between items-center w-full cursor-pointer"
+                      >
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
@@ -266,10 +296,11 @@ export default function Companies() {
                               ? handleCompanySearchChange
                               : handleIndustrySearchChange
                           }
+                          onClick={(e) => e.stopPropagation()}
                           className="mt-2 p-1 text-sm w-full"
                         />
                       ) : (
-                        <div style={{ height: "38px" }} /> // Adjust height as needed to match your input height
+                        <div style={{ height: "38px" }} />
                       )}
                     </div>
                   </TableHeaderCell>
@@ -290,6 +321,45 @@ export default function Companies() {
           ))}
         </TableBody>
       </Table>
+      <div className="mt-10 flex items-center justify-between">
+        <p className="text-tremor-default tabular-nums text-tremor-content dark:text-dark-tremor-content">
+          Page{" "}
+          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">{`${
+            table.getState().pagination.pageIndex + 1
+          }`}</span>{" "}
+          of
+          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+            {" "}
+            {`${table.getPageCount()}`}
+          </span>
+        </p>
+        <div className="inline-flex items-center rounded-tremor-full shadow-tremor-input ring-1 ring-inset ring-tremor-ring dark:shadow-dark-tremor-input dark:ring-dark-tremor-ring">
+          <Button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <span className="sr-only">Previous</span>
+            <RiArrowLeftSLine
+              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+              aria-hidden={true}
+            />
+          </Button>
+          <span
+            className="h-5 border-r border-tremor-border dark:border-dark-tremor-border"
+            aria-hidden={true}
+          />
+          <Button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <span className="sr-only">Next</span>
+            <RiArrowRightSLine
+              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+              aria-hidden={true}
+            />
+          </Button>
+        </div>
+      </div>
     </>
   );
 }
