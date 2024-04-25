@@ -478,7 +478,7 @@ const App: React.FC = () => {
           <Route path="*" element={<ErrorPage />} />
         </Routes>
         <div className="bg-gray-800 text-white p-4 text-center mt-auto rounded-lg">
-          <p>If you have any questions, please don't hesitate to contact us at <a href="dashboardcoa@gmail.com" className="text-cyan-300 hover:underline">dashboardcoa@gmail.com</a></p>
+          <p>If you have any questions, please don't hesitate to contact us at <a href="mailto: dashboardcoa@gmail.com" className="text-cyan-300 hover:underline">dashboardcoa@gmail.com</a></p>
         </div>
 
       </div>
