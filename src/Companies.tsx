@@ -1,9 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import {
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-  RiSearchLine,
-} from "@remixicon/react";
+import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import {
   flexRender,
   getCoreRowModel,
@@ -19,7 +15,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  TextInput,
 } from "@tremor/react";
 
 function classNames(...classes: string[]): string {
@@ -36,6 +31,20 @@ interface Company {
   launchYear: number;
 }
 
+function capitalizeWords(str) {
+  return str
+    .replace(/;/g, ", ")
+    .split(", ")
+    .map((segment) =>
+      segment
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    )
+    .join(", ");
+}
+
 function getMedianValue(value) {
   if (value && value.includes("-")) {
     const parts = value.split("-").map((part) => parseFloat(part.trim()));
@@ -48,7 +57,30 @@ function getMedianValue(value) {
 
 export default function Companies() {
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [companySearchTerm, setCompanySearchTerm] = useState("");
+  const [industrySearchTerm, setIndustrySearchTerm] = useState("");
+
+  function handleCompanySearchChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    setCompanySearchTerm(event.target.value);
+  }
+
+  function handleIndustrySearchChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    setIndustrySearchTerm(event.target.value);
+  }
+
+  const filteredCompanies = useMemo(() => {
+    return companies.filter(
+      (company) =>
+        company.name.toLowerCase().includes(companySearchTerm.toLowerCase()) &&
+        company.industries
+          .toLowerCase()
+          .includes(industrySearchTerm.toLowerCase())
+    );
+  }, [companies, companySearchTerm, industrySearchTerm]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,28 +108,24 @@ export default function Companies() {
     fetchData();
   }, []);
 
-  function handleSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setSearchTerm(event.target.value);
-  }
-
-  const filteredCompanies = useMemo(
-    () =>
-      companies.filter((company) =>
-        company.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    [companies, searchTerm]
-  );
-
   const companiesColumns: ColumnDef<Company, unknown>[] = [
     {
       header: "Company Name",
       accessorKey: "name",
       enableSorting: true,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
     },
     {
       header: "Industry",
       accessorKey: "industries",
       enableSorting: true,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
     },
     {
       header: "Total Funding",
@@ -120,6 +148,10 @@ export default function Companies() {
       header: "Last Funding Round",
       accessorKey: "round",
       enableSorting: false,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
     },
     {
       header: "Valuation",
@@ -142,6 +174,10 @@ export default function Companies() {
       header: "Growth Stage",
       accessorKey: "growth_stage",
       enableSorting: false,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
     },
     {
       header: "Launch Year",
@@ -156,7 +192,7 @@ export default function Companies() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     initialState: {
-      sorting: [{ id: "valuation", desc: true }],
+      sorting: [{ id: "round_valuation_usd", desc: true }],
     },
   });
 
@@ -164,36 +200,23 @@ export default function Companies() {
     <>
       <div className="mb-8 flex justify-center w-full">
         <h1 className="text-3xl font-bold text-cyan-200">
-          Comprehensive List of Startups
+          Comprehensive List of Tech Companies from Atlanta
         </h1>
       </div>
-      <div>
-        <TextInput
-          icon={RiSearchLine}
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
+
       <Table>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const toggleSortingHandler =
-                  header.column.getToggleSortingHandler();
-
+                const hasSearch =
+                  header.id === "name" || header.id === "industries"; // Only these columns have search
                 return (
                   <TableHeaderCell
                     key={header.id}
                     onClick={(event) =>
-                      toggleSortingHandler && toggleSortingHandler(event)
+                      header.column.getToggleSortingHandler()?.(event)
                     }
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" && toggleSortingHandler) {
-                        toggleSortingHandler(event);
-                      }
-                    }}
                     className={classNames(
                       header.column.getCanSort()
                         ? "cursor-pointer select-none"
@@ -201,40 +224,52 @@ export default function Companies() {
                       "px-0.5 py-1.5 text-cyan-200"
                     )}
                     tabIndex={header.column.getCanSort() ? 0 : -1}
-                    aria-sort={
-                      header.column.getIsSorted()
-                        ? header.column.getIsSorted() === "asc"
-                          ? "ascending"
-                          : header.column.getIsSorted() === "desc"
-                          ? "descending"
-                          : "none"
-                        : "none"
-                    }
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {header.column.getCanSort() && (
-                        <div className="-space-y-2">
-                          <RiArrowUpSLine
-                            className={
-                              header.column.getIsSorted() === "desc"
-                                ? "opacity-30"
-                                : ""
-                            }
-                            aria-hidden={true}
-                          />
-                          <RiArrowDownSLine
-                            className={
-                              header.column.getIsSorted() === "asc"
-                                ? "opacity-30"
-                                : ""
-                            }
-                            aria-hidden={true}
-                          />
-                        </div>
+                    <div className="flex flex-col items-center w-full">
+                      <div className="flex justify-between items-center w-full">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getCanSort() && (
+                          <div className="flex items-center -space-y-2">
+                            <RiArrowUpSLine
+                              className={
+                                header.column.getIsSorted() === "desc"
+                                  ? "opacity-30"
+                                  : ""
+                              }
+                              aria-hidden="true"
+                            />
+                            <RiArrowDownSLine
+                              className={
+                                header.column.getIsSorted() === "asc"
+                                  ? "opacity-30"
+                                  : ""
+                              }
+                              aria-hidden="true"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      {hasSearch ? (
+                        <input
+                          type="text"
+                          placeholder={`Search ${header.column.columnDef.header}...`}
+                          value={
+                            header.id === "name"
+                              ? companySearchTerm
+                              : industrySearchTerm
+                          }
+                          onChange={
+                            header.id === "name"
+                              ? handleCompanySearchChange
+                              : handleIndustrySearchChange
+                          }
+                          className="mt-2 p-1 text-sm w-full"
+                        />
+                      ) : (
+                        <div style={{ height: "38px" }} /> // Adjust height as needed to match your input height
                       )}
                     </div>
                   </TableHeaderCell>
