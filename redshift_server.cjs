@@ -18,7 +18,7 @@ const pool = new Pool({ //NEED TO SWITCH TO ENVIRONMENTAL VARIABLES
 
 app.get('/api/company_page', async (req, res) => {
   try {
-    const queryResult = await pool.query(`SELECT name, industries, round, current_company_valuation, growth_stage, launch_year FROM coadata.master_table_stg`);
+    const queryResult = await pool.query(`SELECT name, industries, round, current_company_valuation, growth_stage, launch_year FROM coadata.empl_logo_val_stg`);
     res.json(queryResult.rows); 
   } catch (err) {
     console.error('Error executing query:', err.stack);
@@ -28,40 +28,7 @@ app.get('/api/company_page', async (req, res) => {
 
 
 
-app.get('/api/ecosystemValue', async (req, res) => {
-    const result = await fetchMetricData('current_company_valuation');
-    res.send(result);
-  });
 
-  app.get('/api/fundingRounds', async (req, res) => {
-    const result = await fetchMetricData('total_rounds_number');
-    res.send(result);
-  });
-
-  app.get('/api/totalFunding', async (req, res) => {
-    const result = await fetchMetricData('amount_raised_this_round_usdm');
-    res.send(result);
-  });
-  
-//   app.get('/api/number_of_startups', async (req, res) => {
-//     const result = await fetchMetricData('funding_rounds_column');
-//     res.send(result);
-//   });
-  
-//   app.get('/api/minority_founded_startups', async (req, res) => {
-//     const result = await fetchMetricData('ecosystem_value_column');
-//     res.send(result);
-//   });
-  
-  app.get('/api/type_of_startup', async (req, res) => {
-    const result = await fetchMetricData('industries');
-    res.send(result);
-  });
-  
-  app.get('/api/amountRaised', async (req, res) => {
-    const result = await fetchMetricData('amount_raised_this_round_usdm');
-    res.send(result);
-  });
   
 
 async function fetchMetricData(columnName) {
