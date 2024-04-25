@@ -61,3 +61,6 @@ h2 {
     color: #003b46;
 }
 
+.raise-header {
+    transform: translateY(-38px);
+  }

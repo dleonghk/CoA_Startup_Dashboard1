@@ -1,8 +1,15 @@
-import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+} from "@remixicon/react";
 import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   ColumnDef,
   useReactTable,
 } from "@tanstack/react-table";
@@ -17,7 +24,7 @@ import {
 } from "@tremor/react";
 
 function classNames(...classes: string[]): string {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 interface Company {
@@ -28,324 +35,272 @@ interface Company {
   totalFunding: number;
   lastFundingRound: string;
   launchYear: number;
+  width: number;
 }
 
-const companies = [
-  {
-    name: "QuantumScape",
-    industries: "Energy, Battery Technology",
-    valuation: 6800000000,
-    growthStage: "Growth",
-    totalFunding: 1500000000,
-    lastFundingRound: "Series D",
-    launchYear: 2010,
-  },
-  {
-    name: "Lilium",
-    industries: "Aerospace, Electric Vehicles",
-    valuation: 3300000000,
-    growthStage: "Early",
-    totalFunding: 500000000,
-    lastFundingRound: "Series B",
-    launchYear: 2015,
-  },
-  {
-    name: "Ribbit Leap",
-    industries: "Fintech, Investments",
-    valuation: 2000000000,
-    growthStage: "Growth",
-    totalFunding: 600000000,
-    lastFundingRound: "Series C",
-    launchYear: 2012,
-  },
-  {
-    name: "Helion Energy",
-    industries: "Energy, Fusion Power",
-    valuation: 4000000000,
-    growthStage: "Expansion",
-    totalFunding: 1200000000,
-    lastFundingRound: "Series E",
-    launchYear: 2013,
-  },
-  {
-    name: "Zapier",
-    industries: "SaaS, Automation",
-    valuation: 5000000000,
-    growthStage: "Mature",
-    totalFunding: 290000000,
-    lastFundingRound: "Series A",
-    launchYear: 2011,
-  },
-  {
-    name: "Bolt",
-    industries: "E-commerce, Technology",
-    valuation: 8000000000,
-    growthStage: "Expansion",
-    totalFunding: 2000000000,
-    lastFundingRound: "Series F",
-    launchYear: 2014,
-  },
-  {
-    name: "Nuro",
-    industries: "Autonomous Vehicles, Robotics",
-    valuation: 8600000000,
-    growthStage: "Growth",
-    totalFunding: 1000000000,
-    lastFundingRound: "Series D",
-    launchYear: 2016,
-  },
-  {
-    name: "Impossible Foods",
-    industries: "Food and Beverage, Plant-based Proteins",
-    valuation: 7000000000,
-    growthStage: "Expansion",
-    totalFunding: 1500000000,
-    lastFundingRound: "Series G",
-    launchYear: 2011,
-  },
-  {
-    name: "Modern Meadow",
-    industries: "Biotechnology, Leather Alternatives",
-    valuation: 700000000,
-    growthStage: "Growth",
-    totalFunding: 300000000,
-    lastFundingRound: "Series C",
-    launchYear: 2014,
-  },
-  {
-    name: "Neuralink",
-    industries: "Healthcare, Neurotechnology",
-    valuation: 1000000000,
-    growthStage: "Early",
-    totalFunding: 158000000,
-    lastFundingRound: "Series A",
-    launchYear: 2016,
-  },
+const Button = ({ onClick, disabled, children }) => {
+  return (
+    <button
+      type="button"
+      className="px-2 py-2 text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+};
 
-  {
-    name: "OpenAI",
-    industries: "Artificial Intelligence, Research",
-    valuation: 2900000000,
-    growthStage: "Expansion",
-    totalFunding: 1000000000,
-    lastFundingRound: "Series B",
-    launchYear: 2015,
-  },
-  {
-    name: "SpaceX",
-    industries: "Aerospace, Transport",
-    valuation: 74000000000,
-    growthStage: "Mature",
-    totalFunding: 10000000000,
-    lastFundingRound: "Series K",
-    launchYear: 2002,
-  },
-  {
-    name: "ByteDance",
-    industries: "Social Media, Technology",
-    valuation: 140000000000,
-    growthStage: "Mature",
-    totalFunding: 7000000000,
-    lastFundingRound: "Series I",
-    launchYear: 2012,
-  },
-  {
-    name: "Stripe",
-    industries: "Fintech, Software",
-    valuation: 95000000000,
-    growthStage: "Expansion",
-    totalFunding: 2000000000,
-    lastFundingRound: "Series G",
-    launchYear: 2010,
-  },
-  {
-    name: "Rivian",
-    industries: "Automotive, Electric Vehicles",
-    valuation: 27000000000,
-    growthStage: "Growth",
-    totalFunding: 10500000000,
-    lastFundingRound: "Series H",
-    launchYear: 2009,
-  },
-  {
-    name: "Epic Games",
-    industries: "Gaming, Software",
-    valuation: 17000000000,
-    growthStage: "Expansion",
-    totalFunding: 3400000000,
-    lastFundingRound: "Series E",
-    launchYear: 1991,
-  },
-  {
-    name: "Palantir",
-    industries: "Data Analytics, Software",
-    valuation: 15000000000,
-    growthStage: "Mature",
-    totalFunding: 3000000000,
-    lastFundingRound: "Series J",
-    launchYear: 2003,
-  },
-  {
-    name: "Tesla",
-    industries: "Automotive, Energy",
-    valuation: 600000000000,
-    growthStage: "Mature",
-    totalFunding: 20000000000,
-    lastFundingRound: "Series F",
-    launchYear: 2003,
-  },
-  {
-    name: "Theranos",
-    industries: "Healthcare, Biotechnology",
-    valuation: 900000000,
-    growthStage: "Early",
-    totalFunding: 700000000,
-    lastFundingRound: "Series C",
-    launchYear: 2003,
-  },
-  {
-    name: "Robinhood",
-    industries: "Fintech, Stock Trading",
-    valuation: 11000000000,
-    growthStage: "Growth",
-    totalFunding: 2200000000,
-    lastFundingRound: "Series G",
-    launchYear: 2013,
-  },
-];
+function capitalizeWords(str) {
+  return str
+    .replace(/;/g, ", ")
+    .split(", ")
+    .map((segment) =>
+      segment
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    )
+    .join(", ");
+}
 
-const companiesColumns: ColumnDef<Company, unknown>[] = [
-  {
-    header: "Company Name",
-    accessorKey: "name",
-    enableSorting: true,
-  },
-  {
-    header: "Industry",
-    accessorKey: "industries",
-    enableSorting: true,
-  },
-  {
-    header: "Valuation",
-    accessorKey: "valuation",
-    enableSorting: true,
-    cell: ({ getValue }) => {
-      const number = getValue() as number;
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-      }).format(number);
-    },
-  },
-  {
-    header: "Total Funding",
-    accessorKey: "totalFunding",
-    enableSorting: true,
-    cell: ({ getValue }) => {
-      const number = getValue() as number;
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-      }).format(number);
-    },
-  },
-  {
-    header: "Last Funding Round",
-    accessorKey: "lastFundingRound",
-    enableSorting: false,
-  },
-  {
-    header: "Growth Stage",
-    accessorKey: "growthStage",
-    enableSorting: false,
-  },
-  {
-    header: "Launch Year",
-    accessorKey: "launchYear",
-    enableSorting: true,
-  },
-];
+function getMedianValue(value) {
+  if (value && value.includes("-")) {
+    const parts = value.split("-").map((part) => parseFloat(part.trim()));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return (parts[0] + parts[1]) / 2;
+    }
+  }
+  return parseFloat(value);
+}
 
 export default function Companies() {
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companySearchTerm, setCompanySearchTerm] = useState("");
+  const [industrySearchTerm, setIndustrySearchTerm] = useState("");
+  const [pageIndex] = useState(0);
+  const [pageSize] = useState(20);
+
+  const handleCompanySearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    event.stopPropagation();
+    setCompanySearchTerm(event.target.value);
+  };
+
+  const handleIndustrySearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    event.stopPropagation();
+    setIndustrySearchTerm(event.target.value);
+  };
+
+  const filteredCompanies = useMemo(() => {
+    return companies.filter(
+      (company) =>
+        company.name.toLowerCase().includes(companySearchTerm.toLowerCase()) &&
+        company.industries
+          .toLowerCase()
+          .includes(industrySearchTerm.toLowerCase())
+    );
+  }, [companies, companySearchTerm, industrySearchTerm]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      //const cachedData = localStorage.getItem("companies");
+      //if (cachedData) {
+      //  setCompanies(JSON.parse(cachedData));
+      //} else {
+      try {
+        const response = await fetch("/api/company_page");
+        if (!response.ok) {
+          console.error(
+            "Failed to fetch companies: Network response was not ok"
+          );
+          return;
+        }
+        const data = await response.json();
+        setCompanies(data);
+        localStorage.setItem("companies", JSON.stringify(data));
+      } catch (error) {
+        console.error("Failed to fetch companies", error);
+      }
+      //}
+    };
+
+    fetchData();
+  }, []);
+
+  const companiesColumns: ColumnDef<Company, unknown>[] = [
+    {
+      header: "Company Name",
+      accessorKey: "name",
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
+    },
+    {
+      header: "Industry",
+      accessorKey: "industries",
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
+    },
+    {
+      header: "Total Funding",
+      accessorKey: "amount",
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const value = getValue();
+        const medianValue = getMedianValue(value);
+        if (!isNaN(medianValue)) {
+          return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 0,
+          }).format(medianValue);
+        }
+        return "N/A";
+      },
+    },
+    {
+      header: "Last Funding Round",
+      accessorKey: "round",
+      enableSorting: false,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
+    },
+    {
+      header: "Valuation",
+      accessorKey: "round_valuation_usd",
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const value = getValue();
+        const medianValue = getMedianValue(value);
+        if (!isNaN(medianValue)) {
+          return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 0,
+          }).format(medianValue);
+        }
+        return "N/A";
+      },
+    },
+    {
+      header: "Growth Stage",
+      accessorKey: "growth_stage",
+      enableSorting: false,
+      cell: ({ getValue }) => {
+        const text = getValue();
+        return capitalizeWords(text);
+      },
+    },
+    {
+      header: "Launch Year",
+      accessorKey: "launch_year",
+      enableSorting: true,
+    },
+  ];
+
   const table = useReactTable<Company>({
-    data: companies,
+    data: filteredCompanies,
     columns: companiesColumns,
+    initialState: {
+      sorting: [{ id: "round_valuation_usd", desc: true }],
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    initialState: {
-      sorting: [{ id: "valuation", desc: false }],
-    },
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
     <>
       <div className="mb-8 flex justify-center w-full">
         <h1 className="text-3xl font-bold text-cyan-200">
-          Comprehensive List of Startups
+          Comprehensive List of Tech Companies from Atlanta
         </h1>
       </div>
+
       <Table>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const toggleSortingHandler =
-                  header.column.getToggleSortingHandler();
-
+                const hasSearch =
+                  header.id === "name" || header.id === "industries";
                 return (
                   <TableHeaderCell
                     key={header.id}
-                    onClick={(event) =>
-                      toggleSortingHandler && toggleSortingHandler(event)
-                    }
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" && toggleSortingHandler) {
-                        toggleSortingHandler(event);
-                      }
-                    }}
                     className={classNames(
                       header.column.getCanSort()
                         ? "cursor-pointer select-none"
                         : "",
-                      "px-0.5 py-1.5 text-cyan-200"
+                      "px-0.5 py-1.5 text-cyan-200",
+                      !hasSearch && "raise-header" // Apply the class conditionally
                     )}
                     tabIndex={header.column.getCanSort() ? 0 : -1}
-                    aria-sort={
-                      header.column.getIsSorted()
-                        ? header.column.getIsSorted() === "asc"
-                          ? "ascending"
-                          : header.column.getIsSorted() === "desc"
-                          ? "descending"
-                          : "none"
-                        : "none"
-                    }
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {header.column.getCanSort() && (
-                        <div className="-space-y-2">
-                          <RiArrowUpSLine
-                            className={
-                              header.column.getIsSorted() === "desc"
-                                ? "opacity-30"
-                                : ""
-                            }
-                            aria-hidden={true}
-                          />
-                          <RiArrowDownSLine
-                            className={
-                              header.column.getIsSorted() === "asc"
-                                ? "opacity-30"
-                                : ""
-                            }
-                            aria-hidden={true}
-                          />
-                        </div>
+                    <div className="flex flex-col items-center w-full">
+                      <div
+                        onClick={header.column.getToggleSortingHandler()}
+                        className="flex justify-between items-center w-full cursor-pointer"
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getCanSort() && (
+                          <div className="flex items-center -space-y-2">
+                            <RiArrowUpSLine
+                              className={
+                                header.column.getIsSorted() === "desc"
+                                  ? "opacity-30"
+                                  : ""
+                              }
+                              aria-hidden="true"
+                            />
+                            <RiArrowDownSLine
+                              className={
+                                header.column.getIsSorted() === "asc"
+                                  ? "opacity-30"
+                                  : ""
+                              }
+                              aria-hidden="true"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      {hasSearch ? (
+                        <input
+                          type="text"
+                          placeholder={`Search ${header.column.columnDef.header}...`}
+                          value={
+                            header.id === "name"
+                              ? companySearchTerm
+                              : industrySearchTerm
+                          }
+                          onChange={
+                            header.id === "name"
+                              ? handleCompanySearchChange
+                              : handleIndustrySearchChange
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-2 p-1 text-sm w-full"
+                        />
+                      ) : (
+                        <div style={{ height: "38px" }} />
                       )}
                     </div>
                   </TableHeaderCell>
@@ -366,6 +321,45 @@ export default function Companies() {
           ))}
         </TableBody>
       </Table>
+      <div className="mt-10 flex items-center justify-between">
+        <p className="text-tremor-default tabular-nums text-tremor-content dark:text-dark-tremor-content">
+          Page{" "}
+          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">{`${
+            table.getState().pagination.pageIndex + 1
+          }`}</span>{" "}
+          of
+          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+            {" "}
+            {`${table.getPageCount()}`}
+          </span>
+        </p>
+        <div className="inline-flex items-center rounded-tremor-full shadow-tremor-input ring-1 ring-inset ring-tremor-ring dark:shadow-dark-tremor-input dark:ring-dark-tremor-ring">
+          <Button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <span className="sr-only">Previous</span>
+            <RiArrowLeftSLine
+              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+              aria-hidden={true}
+            />
+          </Button>
+          <span
+            className="h-5 border-r border-tremor-border dark:border-dark-tremor-border"
+            aria-hidden={true}
+          />
+          <Button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <span className="sr-only">Next</span>
+            <RiArrowRightSLine
+              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+              aria-hidden={true}
+            />
+          </Button>
+        </div>
+      </div>
     </>
   );
 }
