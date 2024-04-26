@@ -248,7 +248,7 @@ export default function Companies() {
                         ? "cursor-pointer select-none"
                         : "",
                       "px-0.5 py-1.5 text-cyan-200",
-                      !hasSearch && "raise-header" // Apply the class conditionally
+                      !hasSearch ? "raise-header" : ""
                     )}
                     tabIndex={header.column.getCanSort() ? 0 : -1}
                   >
