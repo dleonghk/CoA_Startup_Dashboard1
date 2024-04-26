@@ -18,11 +18,9 @@ const pool = new Pool({
   port: 5439,
 });
 
-type Row = { [key: string]: string | number };
-
 app.get("/api/company_page", async (req, res) => {
   try {
-    const queryResult = await pool.query<Row[]>(
+    const queryResult = await pool.query(
       `SELECT name, industries, round, amount, round_valuation_usd, growth_stage, launch_year FROM coadata.master_table_stg`
     );
     res.json(queryResult.rows);
