@@ -20,13 +20,19 @@ const AboutUs: React.FC = () => {
         {teamMembers.map((member, index) => (
           <Card key={index} className="bg-slate-800 border-none p-8 rounded-lg">
             <div className="flex items-center space-x-4">
-              <img src={member.imageUrl} alt={member.name} className="w-24 h-24 rounded-full" />
+              <img
+                src={member.imageUrl}
+                alt={member.name}
+                className="w-24 h-24 rounded-full"
+              />
               <div>
                 <h3 className="text-xl font-semibold text-cyan-200">
                   <a href={member.linkedInUrl} target="_blank" rel="noopener noreferrer">{member.name}</a>
                 </h3>
                 <p className="text-md text-cyan-200">{member.role}</p>
-                <p className="text-md text-cyan-100 mt-1">{member.description}</p>
+                <p className="text-md text-cyan-100 mt-1">
+                  {member.description}
+                </p>
               </div>
             </div>
           </Card>
@@ -34,7 +40,15 @@ const AboutUs: React.FC = () => {
         <Card className="bg-slate-800 border-none p-8 rounded-lg col-span-1 md:col-span-2 lg:col-span-3">
           <h2 className="text-2xl font-bold text-cyan-200 mb-4">Our Mission</h2>
           <p className="text-lg text-cyan-100">
-            The mission of our project is to develop a comprehensive analysis and visualization of the startup ecosystem in Atlanta, aiming to provide vital insights for the City of Atlanta and potential investors. Through ecosystem mapping, defining key metrics, benchmarking against national and global standards, and identifying challenges and successes, we seek to offer a dynamic overview of Atlanta's economic metrics, highlight growth trends and investment opportunities, and ultimately contribute to fostering a thriving entrepreneurial environment in the city.
+            The mission of our project is to develop a comprehensive analysis
+            and visualization of the startup ecosystem in Atlanta, aiming to
+            provide vital insights for the City of Atlanta and potential
+            investors. Through ecosystem mapping, defining key metrics,
+            benchmarking against national and global standards, and identifying
+            challenges and successes, we seek to offer a dynamic overview of
+            Atlanta's economic metrics, highlight growth trends and investment
+            opportunities, and ultimately contribute to fostering a thriving
+            entrepreneurial environment in the city.
           </p>
         </Card>
       </div>
