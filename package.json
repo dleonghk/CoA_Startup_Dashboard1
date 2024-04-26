@@ -23,7 +23,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
-    "vercel": "^34.1.2"
+    "vercel": "^34.1.3"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
@@ -40,5 +40,10 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.4.3",
     "vite": "^5.1.4"
-  }
+  },
+  "description": "This project was completed in collaboration with City of Atlanta and Emory's Center of AI, for Emory's 370 - Computer Practicum course.",
+  "main": "postcss.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
