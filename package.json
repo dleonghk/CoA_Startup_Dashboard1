@@ -16,6 +16,7 @@
     "@tanstack/react-table": "^8.16.0",
     "@tremor/react": "^3.14.1",
     "@types/react-router-dom": "^5.3.3",
+    "@aws-sdk/client-redshift-data": "3.563.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

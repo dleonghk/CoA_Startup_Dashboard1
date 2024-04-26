@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
+const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
@@ -31,7 +32,6 @@ app.get("/api/company_page", async (req, res) => {
   }
 });
 
-const PORT = parseInt(process.env.PORT || "3001");
-app.listen(PORT, () => {
+app.listen(port, () => {
   console.log(`Server running on port ${PORT}`);
 });
